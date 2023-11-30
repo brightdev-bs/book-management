@@ -1,15 +1,19 @@
 package com.example.bookmanagement.controller;
 
 import com.example.bookmanagement.entity.Book;
+import com.example.bookmanagement.entity.BookHistory;
 import com.example.bookmanagement.entity.Member;
 import com.example.bookmanagement.fixture.BookFixture;
+import com.example.bookmanagement.fixture.BookHistoryFixture;
 import com.example.bookmanagement.fixture.MemberFixture;
 import com.example.bookmanagement.global.constants.ErrorCode;
 import com.example.bookmanagement.global.payload.book.BookBorrowForm;
+import com.example.bookmanagement.global.payload.book.BookReturnForm;
+import com.example.bookmanagement.global.utils.DateUtils;
+import com.example.bookmanagement.repository.BookHistoryRepository;
 import com.example.bookmanagement.repository.BookRepository;
 import com.example.bookmanagement.repository.MemberRepository;
 import com.example.bookmanagement.service.BookService;
-import com.example.bookmanagement.service.MemberService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -40,6 +44,8 @@ class BookControllerTest {
     MemberRepository memberRepository;
     @Autowired
     BookRepository bookRepository;
+    @Autowired
+    BookHistoryRepository bookHistoryRepository;
 
     @Autowired
     BookService bookService;
@@ -94,5 +100,25 @@ class BookControllerTest {
                 ).andDo(print())
                 .andExpect(jsonPath("statusCode").value(HttpStatus.BAD_REQUEST.toString()))
                 .andExpect(jsonPath("data").value(ErrorCode.NOT_AVAILABLE_BOOK.getMessage()));
+    }
+
+    @DisplayName("도서 반납")
+    @Test
+    void returnBook() throws Exception {
+        Member member = memberRepository.save(MemberFixture.getDefaultMember());
+        Book book = bookRepository.save(BookFixture.getDefaultBook());
+        book.setBorrowed(true);
+        BookHistory history = bookHistoryRepository.save(BookHistoryFixture.getDefaultHistory(book, member));
+
+        BookReturnForm form = new BookReturnForm(book.getId());
+
+        mockMvc.perform(post("/books/return")
+                        .content(objectMapper.writeValueAsString(form))
+                        .contentType(MediaType.APPLICATION_JSON)
+                ).andDo(print())
+                .andExpect(jsonPath("statusCode").value(HttpStatus.OK.toString()))
+                .andExpect(jsonPath("data.bookName").value(book.getName()))
+                .andExpect(jsonPath("data.borrowedAt").value(history.getBorrowedAt().toString()))
+                .andExpect(jsonPath("data.returnedAt").value(LocalDate.now().toString()));
     }
 }
