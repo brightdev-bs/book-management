@@ -35,8 +35,8 @@ public class BookHistory {
 
     public BookHistory() {}
 
-    public void setReturnDate(String date) {
-        this.returnedAt = DateUtils.fromString(date);
+    public void setReturnDate(LocalDate date) {
+        this.returnedAt = date;
     }
 
     @Builder

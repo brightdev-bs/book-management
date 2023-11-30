@@ -6,6 +6,7 @@ import com.example.bookmanagement.entity.Member;
 import com.example.bookmanagement.global.exception.BookNotAvailableException;
 import com.example.bookmanagement.global.exception.NotFoundException;
 import com.example.bookmanagement.global.payload.book.BookBorrowForm;
+import com.example.bookmanagement.global.payload.book.BookReturnForm;
 import com.example.bookmanagement.repository.BookHistoryRepository;
 import com.example.bookmanagement.repository.BookRepository;
 import com.example.bookmanagement.repository.MemberRepository;
@@ -17,6 +18,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDate;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -77,10 +79,40 @@ class BookServiceTest {
         Assertions.assertThrows(BookNotAvailableException.class, () -> bookService.borrowBook(form));
     }
 
+    @DisplayName("도서 반납")
+    @Test
+    void returnBook() {
+        BookReturnForm form = getBookReturnForm();
+        BookHistory history = mock(BookHistory.class);
+        Book book = mock(Book.class);
+
+        given(bookHistoryRepository.findById(any(Long.class))).willReturn(Optional.of(history));
+        given(history.getBook()).willReturn(book);
+        given(book.getName()).willReturn("test");
+
+        bookService.returnBook(form);
+
+        then(bookHistoryRepository).should().findById(any(Long.class));
+        then(history).should().setReturnDate(LocalDate.now());
+        then(book).should().setIsBorrowed(false);
+    }
+
+    @DisplayName("도서 반납 실패: 이력 없음")
+    @Test
+    void returnBookFailedWithNotFoundHistory() {
+        given(bookHistoryRepository.findById(any(Long.class))).willReturn(Optional.empty());
+
+        Assertions.assertThrows(NotFoundException.class, () -> bookService.returnBook(getBookReturnForm()));
+    }
+
     private BookBorrowForm getForm() {
         return new BookBorrowForm(
                 UUID.randomUUID(),
                 1L
         );
+    }
+
+    private BookReturnForm getBookReturnForm() {
+        return new BookReturnForm(1L);
     }
 }

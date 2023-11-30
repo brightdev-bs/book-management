@@ -8,6 +8,8 @@ import com.example.bookmanagement.global.exception.BookNotAvailableException;
 import com.example.bookmanagement.global.exception.NotFoundException;
 import com.example.bookmanagement.global.payload.book.BookBorrowForm;
 import com.example.bookmanagement.global.payload.book.BookBorrowReceipt;
+import com.example.bookmanagement.global.payload.book.BookReturnForm;
+import com.example.bookmanagement.global.payload.book.BookReturnReceipt;
 import com.example.bookmanagement.repository.BookHistoryRepository;
 import com.example.bookmanagement.repository.BookRepository;
 import com.example.bookmanagement.repository.MemberRepository;
@@ -49,5 +51,12 @@ public class BookService {
                 .build();
 
         return bookHistoryRepository.save(history);
+    }
+
+    public BookReturnReceipt returnBook(BookReturnForm bookReturnForm) {
+        BookHistory bookHistory = bookHistoryRepository.findById(bookReturnForm.bookId()).orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND_BOOK_HISTORY));
+        bookHistory.setReturnDate(LocalDate.now());
+        bookHistory.getBook().setIsBorrowed(false);
+        return BookReturnReceipt.from(bookHistory);
     }
 }
