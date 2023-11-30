@@ -55,7 +55,8 @@ public class BookService {
 
     @Transactional
     public BookReturnReceipt returnBook(BookReturnForm bookReturnForm) {
-        BookHistory bookHistory = bookHistoryRepository.findById(bookReturnForm.bookId()).orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND_BOOK_HISTORY));
+        Book book = bookRepository.findById(bookReturnForm.bookId()).orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND_BOOK));
+        BookHistory bookHistory = bookHistoryRepository.findByBookAndReturnedAtNull(book).orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND_BOOK_HISTORY));
         bookHistory.setReturnDate(LocalDate.now());
         bookHistory.getBook().setBorrowed(false);
         return BookReturnReceipt.from(bookHistory);

@@ -3,6 +3,7 @@ package com.example.bookmanagement.service;
 import com.example.bookmanagement.entity.Book;
 import com.example.bookmanagement.entity.BookHistory;
 import com.example.bookmanagement.entity.Member;
+import com.example.bookmanagement.fixture.BookFixture;
 import com.example.bookmanagement.global.exception.BookNotAvailableException;
 import com.example.bookmanagement.global.exception.NotFoundException;
 import com.example.bookmanagement.global.payload.book.BookBorrowForm;
@@ -17,6 +18,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.Optional;
@@ -27,6 +29,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.mock;
 
+@Transactional
 @ExtendWith(MockitoExtension.class)
 class BookServiceTest {
 
@@ -86,13 +89,14 @@ class BookServiceTest {
         BookHistory history = mock(BookHistory.class);
         Book book = mock(Book.class);
 
-        given(bookHistoryRepository.findById(any(Long.class))).willReturn(Optional.of(history));
+        given(bookRepository.findById(any(Long.class))).willReturn(Optional.ofNullable(book));
+        given(bookHistoryRepository.findByBookAndReturnedAtNull(any(Book.class))).willReturn(Optional.of(history));
         given(history.getBook()).willReturn(book);
         given(book.getName()).willReturn("test");
 
         bookService.returnBook(form);
 
-        then(bookHistoryRepository).should().findById(any(Long.class));
+        then(bookHistoryRepository).should().findByBookAndReturnedAtNull(any(Book.class));
         then(history).should().setReturnDate(LocalDate.now());
         then(book).should().setBorrowed(false);
     }
@@ -100,7 +104,8 @@ class BookServiceTest {
     @DisplayName("도서 반납 실패: 이력 없음")
     @Test
     void returnBookFailedWithNotFoundHistory() {
-        given(bookHistoryRepository.findById(any(Long.class))).willReturn(Optional.empty());
+        Book book = mock(Book.class);
+        given(bookRepository.findById(any(Long.class))).willReturn(Optional.of(book));
 
         Assertions.assertThrows(NotFoundException.class, () -> bookService.returnBook(getBookReturnForm()));
     }
