@@ -1,13 +1,15 @@
 package com.example.bookmanagement.entity;
 
 import jakarta.persistence.*;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.id.UUIDGenerator;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 @Getter
 @ToString
@@ -15,11 +17,15 @@ import java.time.LocalDate;
 @EntityListeners(AuditingEntityListener.class)
 public class Member {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Id
+    @GeneratedValue(generator = "uuid2")
+    @GenericGenerator(name = "uuid2", type = UUIDGenerator.class)
+    @Column(columnDefinition = "BINARY(16)")
+    private UUID id;
 
     private String name;
 
+    @Column(unique = true)
     private String email;
 
     @CreatedDate
@@ -27,11 +33,12 @@ public class Member {
 
     public Member() {}
 
-    @Builder
-    public Member(Long id, String name, String email, LocalDate createdAt) {
-        this.id = id;
+    private Member(String name, String email) {
         this.name = name;
         this.email = email;
-        this.createdAt = createdAt;
+    }
+
+    public static Member of(String name, String email) {
+        return new Member(name, email);
     }
 }
