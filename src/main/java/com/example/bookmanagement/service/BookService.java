@@ -31,10 +31,10 @@ public class BookService {
 
     @Transactional
     public BookBorrowReceipt borrowBook(BookBorrowForm form) {
-        Member member = memberRepository.findByUUID(form.memberId()).orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND_MEMBER));
+        Member member = memberRepository.findById(form.memberId()).orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND_MEMBER));
         Book book = bookRepository.findById(form.bookId()).orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND_BOOK));
 
-        if(book.getIsBorrowed()) {
+        if(book.getBorrowed()) {
             throw new BookNotAvailableException(ErrorCode.NOT_AVAILABLE_BOOK);
         }
 
@@ -43,7 +43,7 @@ public class BookService {
     }
 
     private BookHistory recordHistory(Book book) {
-        book.setIsBorrowed(true);
+        book.setBorrowed(true);
 
         BookHistory history = BookHistory.builder()
                 .book(book)
@@ -53,10 +53,11 @@ public class BookService {
         return bookHistoryRepository.save(history);
     }
 
+    @Transactional
     public BookReturnReceipt returnBook(BookReturnForm bookReturnForm) {
         BookHistory bookHistory = bookHistoryRepository.findById(bookReturnForm.bookId()).orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND_BOOK_HISTORY));
         bookHistory.setReturnDate(LocalDate.now());
-        bookHistory.getBook().setIsBorrowed(false);
+        bookHistory.getBook().setBorrowed(false);
         return BookReturnReceipt.from(bookHistory);
     }
 }

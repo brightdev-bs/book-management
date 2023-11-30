@@ -10,6 +10,7 @@ public class BookFixture {
         return Book.builder()
                 .name("test")
                 .author("tester")
+                .borrowed(false)
                 .build();
     }
 }

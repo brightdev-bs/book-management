@@ -19,7 +19,7 @@ public class Book extends BaseEntity {
 
     private String author;
 
-    private Boolean isBorrowed;
+    private Boolean borrowed;
 
     @OneToMany(mappedBy = "book")
     private List<BookHistory> histories;
@@ -27,15 +27,15 @@ public class Book extends BaseEntity {
     public Book() {}
 
     @Builder
-    public Book(Long id, String name, String author, Boolean isBorrowed, List<BookHistory> histories) {
+    public Book(Long id, String name, String author, Boolean borrowed, List<BookHistory> histories) {
         this.id = id;
         this.name = name;
         this.author = author;
-        this.isBorrowed = isBorrowed;
+        this.borrowed = borrowed;
         this.histories = histories;
     }
 
-    public void setIsBorrowed(boolean flag) {
-        this.isBorrowed = flag;
+    public void setBorrowed(boolean flag) {
+        this.borrowed = flag;
     }
 }

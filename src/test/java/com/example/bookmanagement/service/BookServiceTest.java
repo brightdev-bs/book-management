@@ -48,19 +48,19 @@ class BookServiceTest {
         Member member = mock(Member.class);
         Book book = mock(Book.class);
 
-        given(memberRepository.findByUUID(any(UUID.class))).willReturn(Optional.of(member));
+        given(memberRepository.findById(any(UUID.class))).willReturn(Optional.of(member));
         given(bookRepository.findById(any(Long.class))).willReturn(Optional.of(book));
 
         bookService.borrowBook(form);
 
-        then(book).should().setIsBorrowed(true);
+        then(book).should().setBorrowed(true);
         then(bookHistoryRepository).should().save(any(BookHistory.class));
     }
 
     @DisplayName("도서 대출 실패: 회원 아이디 존재하지 않음")
     @Test
     void borrowBookFailedWithNotFoundMemberId() {
-        given(memberRepository.findByUUID(any(UUID.class))).willReturn(Optional.empty());
+        given(memberRepository.findById(any(UUID.class))).willReturn(Optional.empty());
 
         Assertions.assertThrows(NotFoundException.class, () -> bookService.borrowBook(this.getForm()));
     }
@@ -72,9 +72,9 @@ class BookServiceTest {
         Member member = mock(Member.class);
         Book book = mock(Book.class);
 
-        given(memberRepository.findByUUID(any(UUID.class))).willReturn(Optional.of(member));
+        given(memberRepository.findById(any(UUID.class))).willReturn(Optional.of(member));
         given(bookRepository.findById(any(Long.class))).willReturn(Optional.of(book));
-        given(book.getIsBorrowed()).willReturn(true);
+        given(book.getBorrowed()).willReturn(true);
 
         Assertions.assertThrows(BookNotAvailableException.class, () -> bookService.borrowBook(form));
     }
@@ -94,7 +94,7 @@ class BookServiceTest {
 
         then(bookHistoryRepository).should().findById(any(Long.class));
         then(history).should().setReturnDate(LocalDate.now());
-        then(book).should().setIsBorrowed(false);
+        then(book).should().setBorrowed(false);
     }
 
     @DisplayName("도서 반납 실패: 이력 없음")
