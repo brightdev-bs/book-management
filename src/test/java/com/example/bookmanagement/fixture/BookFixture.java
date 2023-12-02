@@ -6,6 +6,7 @@ public class BookFixture {
 
     public static Book getDefaultBook() {
         return Book.builder()
+                .id(1L)
                 .name("test")
                 .author("tester")
                 .borrowed(false)

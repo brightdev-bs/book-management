@@ -1,5 +1,6 @@
 package com.example.bookmanagement.entity;
 
+import com.example.bookmanagement.global.payload.book.BookUpdateForm;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -37,5 +38,10 @@ public class Book extends BaseEntity {
 
     public void setBorrowed(boolean flag) {
         this.borrowed = flag;
+    }
+
+    public void updateInfo(BookUpdateForm form) {
+        this.author = form.author();
+        this.name = form.bookName();
     }
 }

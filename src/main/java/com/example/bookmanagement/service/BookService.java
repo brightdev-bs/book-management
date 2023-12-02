@@ -7,10 +7,7 @@ import com.example.bookmanagement.global.constants.ErrorCode;
 import com.example.bookmanagement.global.exception.BookNotAvailableException;
 import com.example.bookmanagement.global.exception.DelayedMemberException;
 import com.example.bookmanagement.global.exception.NotFoundException;
-import com.example.bookmanagement.global.payload.book.BookBorrowForm;
-import com.example.bookmanagement.global.payload.book.BookBorrowReceipt;
-import com.example.bookmanagement.global.payload.book.BookReturnForm;
-import com.example.bookmanagement.global.payload.book.BookReturnReceipt;
+import com.example.bookmanagement.global.payload.book.*;
 import com.example.bookmanagement.repository.BookCacheRepository;
 import com.example.bookmanagement.repository.BookHistoryRepository;
 import com.example.bookmanagement.repository.BookRepository;
@@ -79,5 +76,22 @@ public class BookService {
         if (history.getBorrowedAt().plusDays(7L).isBefore(history.getReturnedAt()))
             return true;
         return false;
+    }
+
+    @Transactional
+    public BookDetails registerBook(BookRegisterFrom form) {
+        Book book = Book.builder()
+                .name(form.bookName())
+                .author(form.author())
+                .build();
+        bookRepository.save(book);
+        return BookDetails.from(book);
+    }
+
+    @Transactional
+    public BookDetails updateBook(BookUpdateForm form) {
+        Book book = bookRepository.findById(form.id()).orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND_BOOK));
+        book.updateInfo(form);
+        return BookDetails.from(book);
     }
 }
