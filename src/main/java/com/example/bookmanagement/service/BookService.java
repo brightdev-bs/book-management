@@ -5,6 +5,7 @@ import com.example.bookmanagement.entity.BookHistory;
 import com.example.bookmanagement.entity.Member;
 import com.example.bookmanagement.global.constants.ErrorCode;
 import com.example.bookmanagement.global.exception.BookNotAvailableException;
+import com.example.bookmanagement.global.exception.DelayedMemberException;
 import com.example.bookmanagement.global.exception.NotFoundException;
 import com.example.bookmanagement.global.payload.book.BookBorrowForm;
 import com.example.bookmanagement.global.payload.book.BookBorrowReceipt;
@@ -15,7 +16,6 @@ import com.example.bookmanagement.repository.BookHistoryRepository;
 import com.example.bookmanagement.repository.BookRepository;
 import com.example.bookmanagement.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,8 +37,12 @@ public class BookService {
         Member member = memberRepository.findById(form.memberId()).orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND_MEMBER));
         Book book = bookRepository.findById(form.bookId()).orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND_BOOK));
 
-        if(book.getBorrowed()) {
+        if (book.getBorrowed()) {
             throw new BookNotAvailableException(ErrorCode.NOT_AVAILABLE_BOOK);
+        }
+
+        if (bookCacheRepository.isDelayedMember(member.getId())) {
+            throw new DelayedMemberException(ErrorCode.DELAYED_USER);
         }
 
         recordHistory(book);
