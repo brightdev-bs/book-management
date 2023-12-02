@@ -10,6 +10,7 @@ import com.example.bookmanagement.global.constants.ErrorCode;
 import com.example.bookmanagement.global.payload.book.BookBorrowForm;
 import com.example.bookmanagement.global.payload.book.BookRegisterFrom;
 import com.example.bookmanagement.global.payload.book.BookReturnForm;
+import com.example.bookmanagement.global.payload.book.BookUpdateForm;
 import com.example.bookmanagement.repository.BookCacheRepository;
 import com.example.bookmanagement.repository.BookHistoryRepository;
 import com.example.bookmanagement.repository.BookRepository;
@@ -32,6 +33,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import java.time.LocalDate;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -157,5 +159,33 @@ class BookControllerTest {
                 .andExpect(jsonPath("data.updatedAt").value(LocalDate.now().toString()));
 
 
+    }
+
+    @DisplayName("도서 업데이트")
+    @Test
+    void updateBook() throws Exception {
+        bookRepository.save(BookFixture.getDefaultBook());
+        BookUpdateForm form = new BookUpdateForm(1L, "changedBook", "changedAuthor");
+        mockMvc.perform(patch("/books/update")
+                        .content(objectMapper.writeValueAsString(form))
+                        .contentType(MediaType.APPLICATION_JSON)
+                ).andDo(print())
+                .andExpect(jsonPath("statusCode").value(HttpStatus.OK.toString()))
+                .andExpect(jsonPath("data.bookName").value("changedBook"))
+                .andExpect(jsonPath("data.author").value("changedAuthor"))
+                .andExpect(jsonPath("data.createdAt").value(LocalDate.now().toString()))
+                .andExpect(jsonPath("data.updatedAt").value(LocalDate.now().toString()));
+    }
+
+    @DisplayName("도서 업데이트 실패")
+    @Test
+    void updateBookFail() throws Exception {
+        BookUpdateForm form = new BookUpdateForm(1L, "changedBook", "changedAuthor");
+        mockMvc.perform(patch("/books/update")
+                        .content(objectMapper.writeValueAsString(form))
+                        .contentType(MediaType.APPLICATION_JSON)
+                ).andDo(print())
+                .andExpect(jsonPath("statusCode").value(HttpStatus.BAD_REQUEST.toString()))
+                .andExpect(jsonPath("data").value(ErrorCode.NOT_FOUND_BOOK.getMessage()));
     }
 }

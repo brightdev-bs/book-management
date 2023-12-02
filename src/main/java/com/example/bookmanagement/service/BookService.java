@@ -87,4 +87,11 @@ public class BookService {
         bookRepository.save(book);
         return BookDetails.from(book);
     }
+
+    @Transactional
+    public BookDetails updateBook(BookUpdateForm form) {
+        Book book = bookRepository.findById(form.id()).orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND_BOOK));
+        book.updateInfo(form);
+        return BookDetails.from(book);
+    }
 }

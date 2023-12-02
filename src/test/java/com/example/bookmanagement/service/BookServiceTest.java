@@ -4,15 +4,10 @@ import com.example.bookmanagement.entity.Book;
 import com.example.bookmanagement.entity.BookHistory;
 import com.example.bookmanagement.entity.Member;
 import com.example.bookmanagement.fixture.BookFixture;
-import com.example.bookmanagement.fixture.BookHistoryFixture;
-import com.example.bookmanagement.fixture.MemberFixture;
 import com.example.bookmanagement.global.exception.BookNotAvailableException;
 import com.example.bookmanagement.global.exception.DelayedMemberException;
 import com.example.bookmanagement.global.exception.NotFoundException;
-import com.example.bookmanagement.global.payload.book.BookBorrowForm;
-import com.example.bookmanagement.global.payload.book.BookDetails;
-import com.example.bookmanagement.global.payload.book.BookRegisterFrom;
-import com.example.bookmanagement.global.payload.book.BookReturnForm;
+import com.example.bookmanagement.global.payload.book.*;
 import com.example.bookmanagement.repository.BookCacheRepository;
 import com.example.bookmanagement.repository.BookHistoryRepository;
 import com.example.bookmanagement.repository.BookRepository;
@@ -173,6 +168,29 @@ class BookServiceTest {
         bookService.registerBook(form);
 
         then(bookRepository).should().save(any(Book.class));
+    }
+
+    @DisplayName("책 수정")
+    @Test
+    void updateBook() {
+        BookUpdateForm form = getUpdateForm();
+        given(bookRepository.findById(any(Long.class))).willReturn(Optional.of(BookFixture.getDefaultBook()));
+
+        BookDetails bookDetails = bookService.updateBook(form);
+
+        Assertions.assertEquals(bookDetails.bookName(), form.bookName());
+        Assertions.assertEquals(bookDetails.author(), form.author());
+    }
+
+    @DisplayName("책 수정 실패: 책 정보 찾을 수 없음")
+    @Test
+    void updateBookFail() {
+        BookUpdateForm form = getUpdateForm();
+        Assertions.assertThrows(NotFoundException.class, () -> bookService.updateBook(form));
+    }
+
+    private BookUpdateForm getUpdateForm() {
+        return new BookUpdateForm(1L, "changedName", "changedAuthor");
     }
 
     private BookReturnForm getBookReturnForm() {
