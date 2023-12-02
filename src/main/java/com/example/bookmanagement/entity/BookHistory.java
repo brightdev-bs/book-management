@@ -11,6 +11,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 @Getter
 @ToString
@@ -25,7 +26,7 @@ public class BookHistory {
     private LocalDate borrowedAt;
 
     @CreatedBy
-    private Long memberId;
+    private UUID memberId;
 
     private LocalDate returnedAt;
 
@@ -35,12 +36,12 @@ public class BookHistory {
 
     public BookHistory() {}
 
-    public void setReturnDate(String date) {
-        this.returnedAt = DateUtils.fromString(date);
+    public void setReturnDate(LocalDate date) {
+        this.returnedAt = date;
     }
 
     @Builder
-    public BookHistory(Long id, LocalDate borrowedAt, Long memberId, LocalDate returnedAt, Book book) {
+    public BookHistory(Long id, LocalDate borrowedAt, UUID memberId, LocalDate returnedAt, Book book) {
         this.id = id;
         this.borrowedAt = borrowedAt;
         this.memberId = memberId;

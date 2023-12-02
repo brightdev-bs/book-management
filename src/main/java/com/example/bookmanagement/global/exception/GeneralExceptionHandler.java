@@ -47,6 +47,24 @@ public class GeneralExceptionHandler {
     }
 
     /**
+     * 엔티티가 존재하지 않을 때 오류 발생
+     */
+    @ExceptionHandler(value = { NotFoundException.class })
+    protected ResponseEntity<ApiResponse> handleNotFoundException(NotFoundException e) {
+        log.error("NotFoundException", e);
+        ApiResponse errorResponse = ApiResponse.of(HttpStatus.BAD_REQUEST.toString(), e.getMessage());
+        return ResponseEntity.status(e.getErrorCode().getHttpStatus())
+                .body(errorResponse);
+    }
+
+    @ExceptionHandler(value = { BookNotAvailableException.class })
+    protected ResponseEntity<ApiResponse> handleBookNotAvailableException(BookNotAvailableException e) {
+        log.error("BookNotAvailableException", e);
+        ApiResponse errorResponse = ApiResponse.of(HttpStatus.BAD_REQUEST.toString(), e.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
+
+    /**
      * 나머지 예외 발생
      */
     @ExceptionHandler(Exception.class)
