@@ -16,13 +16,12 @@ import java.util.UUID;
 public class BookCacheRepository {
 
     private final RedisTemplate<String, String> bookRedisTemplate;
-    private final int BLOCK_DAYS = 3;
-    private final Duration TTL = Duration.ofDays(BLOCK_DAYS - 1); // 오늘 포함 3일
+    private final int BLOCK_DAYS = 2; // 오늘 포함 3일
+    private final Duration TTL = Duration.ofDays(BLOCK_DAYS); // 오늘 포함 3일
 
     public boolean isDelayedMember(UUID id) {
         String key = bookRedisTemplate.opsForValue().get(String.valueOf(id));
-        if (key == null) return false;
-        else return true;
+        return key != null;
     }
 
     public void setDelayedMember(UUID id) {
