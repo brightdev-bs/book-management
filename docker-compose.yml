@@ -1,0 +1,16 @@
+services:
+  mysql:
+    image: mysql
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./db/:/var/lib/mysql
+    environment:
+      - MYSQL_DATABASE=book-management
+      - MYSQL_USER=local
+      - MYSQL_PASSWORD=localpassword
+      - MYSQL_ROOT_PASSWORD=localpassword
+  redis:
+    image: redis:alpine
+    ports:
+      - 6379:6379
