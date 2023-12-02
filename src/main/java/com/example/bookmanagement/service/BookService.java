@@ -45,15 +45,16 @@ public class BookService {
             throw new DelayedMemberException(ErrorCode.DELAYED_USER);
         }
 
-        recordHistory(book);
+        recordHistory(book, member);
         return BookBorrowReceipt.from(book, member);
     }
 
-    private BookHistory recordHistory(Book book) {
+    private BookHistory recordHistory(Book book, Member member) {
         book.setBorrowed(true);
 
         BookHistory history = BookHistory.builder()
                 .book(book)
+                .memberId(member.getId())
                 .borrowedAt(LocalDate.now())
                 .build();
 
@@ -75,7 +76,7 @@ public class BookService {
     }
 
     private boolean isDelayed(BookHistory history) {
-        if (history.getBorrowedAt().plusDays(7L).isAfter(history.getReturnedAt()))
+        if (history.getBorrowedAt().plusDays(7L).isBefore(history.getReturnedAt()))
             return true;
         return false;
     }
