@@ -26,11 +26,4 @@ public class RedisConfig {
         factory.afterPropertiesSet();
         return factory;
     }
-
-    @Bean
-    public RedisTemplate<String, String> defaultRedisTemplate(RedisConnectionFactory factory) {
-        RedisTemplate<String, String> redisTemplate = new RedisTemplate<>();
-        redisTemplate.setConnectionFactory(factory);
-        return redisTemplate;
-    }
 }

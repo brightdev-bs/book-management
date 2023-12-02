@@ -9,12 +9,11 @@ import com.example.bookmanagement.fixture.MemberFixture;
 import com.example.bookmanagement.global.constants.ErrorCode;
 import com.example.bookmanagement.global.payload.book.BookBorrowForm;
 import com.example.bookmanagement.global.payload.book.BookReturnForm;
-import com.example.bookmanagement.global.utils.DateUtils;
+import com.example.bookmanagement.repository.BookCacheRepository;
 import com.example.bookmanagement.repository.BookHistoryRepository;
 import com.example.bookmanagement.repository.BookRepository;
 import com.example.bookmanagement.repository.MemberRepository;
 import com.example.bookmanagement.service.BookService;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -46,6 +45,8 @@ class BookControllerTest {
     BookRepository bookRepository;
     @Autowired
     BookHistoryRepository bookHistoryRepository;
+    @Autowired
+    BookCacheRepository bookCacheRepository;
 
     @Autowired
     BookService bookService;
@@ -100,6 +101,23 @@ class BookControllerTest {
                 ).andDo(print())
                 .andExpect(jsonPath("statusCode").value(HttpStatus.BAD_REQUEST.toString()))
                 .andExpect(jsonPath("data").value(ErrorCode.NOT_AVAILABLE_BOOK.getMessage()));
+    }
+
+    @DisplayName("도서 대출 실패: 연체자")
+    @Test
+    void borrowBookFailedWithDelayed() throws Exception {
+        Member member = memberRepository.save(MemberFixture.getDefaultMember());
+        Book book = bookRepository.save(BookFixture.getDefaultBook());
+        bookCacheRepository.setDelayedMember(member.getId());
+
+        BookBorrowForm form = new BookBorrowForm(member.getId(), book.getId());
+
+        mockMvc.perform(post("/books/borrow")
+                        .content(objectMapper.writeValueAsString(form))
+                        .contentType(MediaType.APPLICATION_JSON)
+                ).andDo(print())
+                .andExpect(jsonPath("statusCode").value(HttpStatus.BAD_REQUEST.toString()))
+                .andExpect(jsonPath("data").value(ErrorCode.DELAYED_USER.getMessage()));
     }
 
     @DisplayName("도서 반납")

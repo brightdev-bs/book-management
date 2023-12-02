@@ -64,6 +64,13 @@ public class GeneralExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
+    @ExceptionHandler(value = { DelayedMemberException.class })
+    protected ResponseEntity<ApiResponse> handleDelayedMemberException(DelayedMemberException e) {
+        log.error("DelayedMemberException", e);
+        ApiResponse errorResponse = ApiResponse.of(HttpStatus.BAD_REQUEST.toString(), e.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
+
     /**
      * 나머지 예외 발생
      */

@@ -5,11 +5,13 @@ import com.example.bookmanagement.entity.BookHistory;
 import com.example.bookmanagement.entity.Member;
 import com.example.bookmanagement.global.constants.ErrorCode;
 import com.example.bookmanagement.global.exception.BookNotAvailableException;
+import com.example.bookmanagement.global.exception.DelayedMemberException;
 import com.example.bookmanagement.global.exception.NotFoundException;
 import com.example.bookmanagement.global.payload.book.BookBorrowForm;
 import com.example.bookmanagement.global.payload.book.BookBorrowReceipt;
 import com.example.bookmanagement.global.payload.book.BookReturnForm;
 import com.example.bookmanagement.global.payload.book.BookReturnReceipt;
+import com.example.bookmanagement.repository.BookCacheRepository;
 import com.example.bookmanagement.repository.BookHistoryRepository;
 import com.example.bookmanagement.repository.BookRepository;
 import com.example.bookmanagement.repository.MemberRepository;
@@ -27,6 +29,7 @@ public class BookService {
     private final BookHistoryRepository bookHistoryRepository;
     private final BookRepository bookRepository;
     private final MemberRepository memberRepository;
+    private final BookCacheRepository bookCacheRepository;
 
 
     @Transactional
@@ -34,8 +37,12 @@ public class BookService {
         Member member = memberRepository.findById(form.memberId()).orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND_MEMBER));
         Book book = bookRepository.findById(form.bookId()).orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND_BOOK));
 
-        if(book.getBorrowed()) {
+        if (book.getBorrowed()) {
             throw new BookNotAvailableException(ErrorCode.NOT_AVAILABLE_BOOK);
+        }
+
+        if (bookCacheRepository.isDelayedMember(member.getId())) {
+            throw new DelayedMemberException(ErrorCode.DELAYED_USER);
         }
 
         recordHistory(book);
@@ -58,7 +65,18 @@ public class BookService {
         Book book = bookRepository.findById(bookReturnForm.bookId()).orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND_BOOK));
         BookHistory bookHistory = bookHistoryRepository.findByBookAndReturnedAtNull(book).orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND_BOOK_HISTORY));
         bookHistory.setReturnDate(LocalDate.now());
+
+        if (isDelayed(bookHistory)) {
+            bookCacheRepository.setDelayedMember(bookHistory.getMemberId());
+        }
+
         bookHistory.getBook().setBorrowed(false);
         return BookReturnReceipt.from(bookHistory);
+    }
+
+    private boolean isDelayed(BookHistory history) {
+        if (history.getBorrowedAt().plusDays(7L).isAfter(history.getReturnedAt()))
+            return true;
+        return false;
     }
 }

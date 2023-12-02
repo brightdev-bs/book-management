@@ -11,7 +11,7 @@ public enum ErrorCode {
     NOT_FOUND_BOOK(HttpStatus.BAD_REQUEST, "책 정보가 없습니다."),
     NOT_AVAILABLE_BOOK(HttpStatus.BAD_REQUEST, "이미 누군가 책을 이용중입니다."),
     NOT_FOUND_BOOK_HISTORY(HttpStatus.BAD_REQUEST, "책을 빌린 기록이 없습니다."),
-    ;
+    DELAYED_USER(HttpStatus.BAD_REQUEST, "연체 사용자입니다.");
 
     private HttpStatus httpStatus;
     private String message;
