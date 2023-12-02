@@ -3,6 +3,7 @@ package com.example.bookmanagement.controller;
 import com.example.bookmanagement.global.payload.book.*;
 import com.example.bookmanagement.global.payload.response.ApiResponse;
 import com.example.bookmanagement.service.BookService;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -35,6 +36,12 @@ public class BookController {
     @PatchMapping("/update")
     public ApiResponse updateBook(@RequestBody BookUpdateForm form) {
         BookDetails response = bookService.updateBook(form);
+        return ApiResponse.of(HttpStatus.OK.toString(), response);
+    }
+
+    @GetMapping("/{bookId}/history")
+    public ApiResponse searchHistory(@PathVariable(name = "bookId") Long bookId) {
+        BookAndHistoryDetail response = bookService.searchBookHistory(bookId);
         return ApiResponse.of(HttpStatus.OK.toString(), response);
     }
 }

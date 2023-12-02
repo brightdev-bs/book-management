@@ -16,7 +16,6 @@ import com.example.bookmanagement.repository.BookHistoryRepository;
 import com.example.bookmanagement.repository.BookRepository;
 import com.example.bookmanagement.repository.MemberRepository;
 import com.example.bookmanagement.service.BookService;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -35,6 +34,7 @@ import java.time.LocalDate;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
@@ -187,5 +187,29 @@ class BookControllerTest {
                 ).andDo(print())
                 .andExpect(jsonPath("statusCode").value(HttpStatus.BAD_REQUEST.toString()))
                 .andExpect(jsonPath("data").value(ErrorCode.NOT_FOUND_BOOK.getMessage()));
+    }
+
+    @DisplayName("도서 조회")
+    @Test
+    void searchHistory() throws Exception {
+        Long id = setupBookAndHistory();
+        System.out.println(id);
+        mockMvc.perform(get("/books/" + id + "/history"))
+                .andDo(print())
+                .andExpect(jsonPath("statusCode").value(HttpStatus.OK.toString()))
+                .andExpect(jsonPath("data.histories.size()").value(5));
+    }
+
+    private Long setupBookAndHistory() {
+        Book book = BookFixture.getBookWithBookName("test1");
+        bookRepository.save(book);
+        bookHistoryRepository.save(BookHistoryFixture.generateCompleteHistory(book));
+        bookHistoryRepository.save(BookHistoryFixture.generateCompleteHistory(book));
+        bookHistoryRepository.save(BookHistoryFixture.generateCompleteHistory(book));
+        bookHistoryRepository.save(BookHistoryFixture.generateCompleteHistory(book));
+        bookHistoryRepository.save(BookHistoryFixture.generateCompleteHistory(book));
+
+        return book.getId();
+
     }
 }

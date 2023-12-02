@@ -22,9 +22,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Optional;
 import java.util.UUID;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
@@ -187,6 +189,24 @@ class BookServiceTest {
     void updateBookFail() {
         BookUpdateForm form = getUpdateForm();
         Assertions.assertThrows(NotFoundException.class, () -> bookService.updateBook(form));
+    }
+
+    @DisplayName("책 이력 조회")
+    @Test
+    void searchBookHistory() {
+        Book book = mock(Book.class);
+        given(bookRepository.findById(any(Long.class))).willReturn(Optional.of(book));
+        given(book.getHistories()).willReturn(new ArrayList<>());
+
+        BookAndHistoryDetail result = bookService.searchBookHistory(any(Long.class));
+
+        assertNotNull(result);
+    }
+
+    @DisplayName("책 이력 조회 실패")
+    @Test
+    void searchBookHistoryFailed() {
+        Assertions.assertThrows(NotFoundException.class, () -> bookService.searchBookHistory(any(Long.class)));
     }
 
     private BookUpdateForm getUpdateForm() {

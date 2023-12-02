@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -93,5 +94,11 @@ public class BookService {
         Book book = bookRepository.findById(form.id()).orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND_BOOK));
         book.updateInfo(form);
         return BookDetails.from(book);
+    }
+
+    // 배치 쿼리 최적화
+    public BookAndHistoryDetail searchBookHistory(Long id) {
+        Book book = bookRepository.findById(id).orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND_BOOK));
+        return BookAndHistoryDetail.from(book);
     }
 }
