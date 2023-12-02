@@ -10,6 +10,8 @@ import com.example.bookmanagement.global.exception.BookNotAvailableException;
 import com.example.bookmanagement.global.exception.DelayedMemberException;
 import com.example.bookmanagement.global.exception.NotFoundException;
 import com.example.bookmanagement.global.payload.book.BookBorrowForm;
+import com.example.bookmanagement.global.payload.book.BookDetails;
+import com.example.bookmanagement.global.payload.book.BookRegisterFrom;
 import com.example.bookmanagement.global.payload.book.BookReturnForm;
 import com.example.bookmanagement.repository.BookCacheRepository;
 import com.example.bookmanagement.repository.BookHistoryRepository;
@@ -161,6 +163,16 @@ class BookServiceTest {
                 UUID.randomUUID(),
                 1L
         );
+    }
+
+    @DisplayName("책 등록")
+    @Test
+    void registerBook() {
+        BookRegisterFrom form = mock(BookRegisterFrom.class);
+
+        bookService.registerBook(form);
+
+        then(bookRepository).should().save(any(Book.class));
     }
 
     private BookReturnForm getBookReturnForm() {

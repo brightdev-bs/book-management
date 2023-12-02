@@ -1,9 +1,6 @@
 package com.example.bookmanagement.controller;
 
-import com.example.bookmanagement.global.payload.book.BookBorrowForm;
-import com.example.bookmanagement.global.payload.book.BookBorrowReceipt;
-import com.example.bookmanagement.global.payload.book.BookReturnForm;
-import com.example.bookmanagement.global.payload.book.BookReturnReceipt;
+import com.example.bookmanagement.global.payload.book.*;
 import com.example.bookmanagement.global.payload.response.ApiResponse;
 import com.example.bookmanagement.service.BookService;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Flux;
 
 @RequiredArgsConstructor
 @RequestMapping("/books")
@@ -30,5 +28,11 @@ public class BookController {
     public ApiResponse returnBook(@RequestBody BookReturnForm form) {
         BookReturnReceipt response = bookService.returnBook(form);
         return ApiResponse.of(HttpStatus.OK.toString(), response);
+    }
+
+    @PostMapping("/register")
+    public ApiResponse registerBook(@RequestBody BookRegisterFrom form) {
+        BookDetails response = bookService.registerBook(form);
+        return ApiResponse.of(HttpStatus.CREATED.toString(), response);
     }
 }
