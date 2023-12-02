@@ -34,7 +34,7 @@ public class Book extends BaseEntity {
         this.name = name;
         this.author = author;
         this.borrowed = borrowed;
-        this.histories = histories.isEmpty() ? new ArrayList<>() : histories;
+        this.histories = histories == null ? new ArrayList<>() : histories;
     }
 
     public void setBorrowed(boolean flag) {

@@ -13,10 +13,15 @@ import com.example.bookmanagement.repository.BookHistoryRepository;
 import com.example.bookmanagement.repository.BookRepository;
 import com.example.bookmanagement.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Transactional(readOnly = true)
@@ -84,6 +89,7 @@ public class BookService {
         Book book = Book.builder()
                 .name(form.bookName())
                 .author(form.author())
+                .histories(new ArrayList<>())
                 .build();
         bookRepository.save(book);
         return BookDetails.from(book);
@@ -97,8 +103,9 @@ public class BookService {
     }
 
     // 배치 쿼리 최적화
-    public BookAndHistoryDetail searchBookHistory(Long id) {
+    public BookAndHistoryDetail searchBookHistory(Long id, Pageable pageable) {
         Book book = bookRepository.findById(id).orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND_BOOK));
-        return BookAndHistoryDetail.from(book);
+        Page<BookHistory> bookHistories = bookHistoryRepository.findAllByBook(book, PageRequest.of(pageable.getPageNumber(), pageable.getPageSize()));
+        return BookAndHistoryDetail.from(bookHistories);
     }
 }

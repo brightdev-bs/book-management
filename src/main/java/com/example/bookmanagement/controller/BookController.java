@@ -5,6 +5,8 @@ import com.example.bookmanagement.global.payload.response.ApiResponse;
 import com.example.bookmanagement.service.BookService;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -40,8 +42,8 @@ public class BookController {
     }
 
     @GetMapping("/{bookId}/history")
-    public ApiResponse searchHistory(@PathVariable(name = "bookId") Long bookId) {
-        BookAndHistoryDetail response = bookService.searchBookHistory(bookId);
+    public ApiResponse searchHistory(@PathVariable(name = "bookId") Long bookId, @PageableDefault Pageable pageable) {
+        BookAndHistoryDetail response = bookService.searchBookHistory(bookId, pageable);
         return ApiResponse.of(HttpStatus.OK.toString(), response);
     }
 }

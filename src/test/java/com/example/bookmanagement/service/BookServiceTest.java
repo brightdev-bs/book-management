@@ -4,6 +4,7 @@ import com.example.bookmanagement.entity.Book;
 import com.example.bookmanagement.entity.BookHistory;
 import com.example.bookmanagement.entity.Member;
 import com.example.bookmanagement.fixture.BookFixture;
+import com.example.bookmanagement.fixture.BookHistoryFixture;
 import com.example.bookmanagement.global.exception.BookNotAvailableException;
 import com.example.bookmanagement.global.exception.DelayedMemberException;
 import com.example.bookmanagement.global.exception.NotFoundException;
@@ -19,10 +20,15 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -31,6 +37,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @Transactional
 @ExtendWith(MockitoExtension.class)
@@ -194,19 +201,31 @@ class BookServiceTest {
     @DisplayName("책 이력 조회")
     @Test
     void searchBookHistory() {
-        Book book = mock(Book.class);
+        Book book = BookFixture.getDefaultBook();
+        PageImpl<BookHistory> result = new PageImpl<>(getHistories(book));
         given(bookRepository.findById(any(Long.class))).willReturn(Optional.of(book));
-        given(book.getHistories()).willReturn(new ArrayList<>());
+        given(bookHistoryRepository.findAllByBook(book, PageRequest.of(0, 5))).willReturn(result);
 
-        BookAndHistoryDetail result = bookService.searchBookHistory(any(Long.class));
+        BookAndHistoryDetail bookAndHistoryDetail = bookService.searchBookHistory(1L, PageRequest.of(0, 5));
 
-        assertNotNull(result);
+        Assertions.assertNotNull(bookAndHistoryDetail);
+        Assertions.assertEquals(1L, book.getId());
+    }
+
+    private List<BookHistory> getHistories(Book book) {
+        List<BookHistory> histories = new ArrayList<>();
+        histories.add(BookHistoryFixture.generateCompleteHistory(book));
+        histories.add(BookHistoryFixture.generateCompleteHistory(book));
+        histories.add(BookHistoryFixture.generateCompleteHistory(book));
+        histories.add(BookHistoryFixture.generateCompleteHistory(book));
+        histories.add(BookHistoryFixture.generateCompleteHistory(book));
+        return histories;
     }
 
     @DisplayName("책 이력 조회 실패")
     @Test
     void searchBookHistoryFailed() {
-        Assertions.assertThrows(NotFoundException.class, () -> bookService.searchBookHistory(any(Long.class)));
+        Assertions.assertThrows(NotFoundException.class, () -> bookService.searchBookHistory(any(Long.class), PageRequest.of(0, 5)));
     }
 
     private BookUpdateForm getUpdateForm() {
