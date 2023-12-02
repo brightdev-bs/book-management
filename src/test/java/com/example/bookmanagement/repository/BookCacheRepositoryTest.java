@@ -24,7 +24,7 @@ class BookCacheRepositoryTest {
         UUID uuid = UUID.randomUUID();
         bookCacheRepository.setDelayedMember(uuid);
 
-        String result = stringRedisTemplate.opsForValue().get(String.valueOf(uuid));
+        String result = stringRedisTemplate.opsForValue().get("MEMBER_ID:" + uuid);
         Assertions.assertNotNull(result);
     }
 

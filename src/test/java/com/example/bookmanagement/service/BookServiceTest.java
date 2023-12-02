@@ -145,7 +145,7 @@ class BookServiceTest {
         BookHistory bookHistory = mock(BookHistory.class);
         given(bookRepository.findById(any(Long.class))).willReturn(Optional.of(book));
         given(bookHistoryRepository.findByBookAndReturnedAtNull(any(Book.class))).willReturn(Optional.of(bookHistory));
-        given(bookHistory.getBorrowedAt()).willReturn(LocalDate.of(2023, 11, 24));
+        given(bookHistory.getBorrowedAt()).willReturn(LocalDate.of(2023, 11, 22));
         given(bookHistory.getReturnedAt()).willReturn(LocalDate.of(2023, 11, 30));
         given(bookHistory.getBook()).willReturn(book);
         given(bookHistory.getMemberId()).willReturn(UUID.randomUUID());

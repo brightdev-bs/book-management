@@ -30,6 +30,7 @@ public class BookHistory {
 
     private LocalDate returnedAt;
 
+    @ToString.Exclude
     @ManyToOne
     @JoinColumn(name = "book_id")
     private Book book;

@@ -20,14 +20,20 @@ public class BookCacheRepository {
     private final Duration TTL = Duration.ofDays(BLOCK_DAYS); // 오늘 포함 3일
 
     public boolean isDelayedMember(UUID id) {
-        String key = bookRedisTemplate.opsForValue().get(String.valueOf(id));
-        return key != null;
+        String key = getKey(id);
+        String value = bookRedisTemplate.opsForValue().get(key);
+        return value != null;
     }
 
     public void setDelayedMember(UUID id) {
-        String key = String.valueOf(id);
+        String key = getKey(id);
         String value = LocalDate.now().plusDays(BLOCK_DAYS).toString();
         log.debug("Set Delayed Member = {}:{}", key, value);
         bookRedisTemplate.opsForValue().set(key, value, TTL);
+    }
+
+    private static String getKey(UUID id) {
+        String key = "MEMBER_ID:" + id;
+        return key;
     }
 }
