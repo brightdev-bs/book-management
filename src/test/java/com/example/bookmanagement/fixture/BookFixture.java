@@ -2,6 +2,8 @@ package com.example.bookmanagement.fixture;
 
 import com.example.bookmanagement.entity.Book;
 
+import java.util.ArrayList;
+
 public class BookFixture {
 
     public static Book getDefaultBook() {
@@ -10,6 +12,7 @@ public class BookFixture {
                 .name("test")
                 .author("tester")
                 .borrowed(false)
+                .histories(new ArrayList<>())
                 .build();
     }
 
@@ -18,6 +21,8 @@ public class BookFixture {
                 .name(name)
                 .author("tester")
                 .borrowed(false)
+                .histories(new ArrayList<>())
                 .build();
     }
+
 }

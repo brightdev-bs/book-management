@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -23,7 +24,7 @@ public class Book extends BaseEntity {
     private Boolean borrowed;
 
     @OneToMany(mappedBy = "book")
-    private List<BookHistory> histories;
+    private List<BookHistory> histories = new ArrayList<>();
 
     public Book() {}
 
@@ -33,7 +34,7 @@ public class Book extends BaseEntity {
         this.name = name;
         this.author = author;
         this.borrowed = borrowed;
-        this.histories = histories;
+        this.histories = histories == null ? new ArrayList<>() : histories;
     }
 
     public void setBorrowed(boolean flag) {

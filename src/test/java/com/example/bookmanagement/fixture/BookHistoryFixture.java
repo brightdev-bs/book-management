@@ -5,6 +5,7 @@ import com.example.bookmanagement.entity.BookHistory;
 import com.example.bookmanagement.entity.Member;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 public class BookHistoryFixture {
 
@@ -13,5 +14,16 @@ public class BookHistoryFixture {
                 .book(book)
                 .memberId(member.getId())
                 .build();
+    }
+
+    public static BookHistory generateCompleteHistory(Book book) {
+        BookHistory history = BookHistory.builder()
+                .book(book)
+                .memberId(UUID.randomUUID())
+                .borrowedAt(LocalDate.now())
+                .returnedAt(LocalDate.now())
+                .build();
+        book.getHistories().add(history);
+        return history;
     }
 }
