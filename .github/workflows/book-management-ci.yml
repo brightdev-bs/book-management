@@ -11,13 +11,16 @@ jobs:
       contents: read
 
     steps:
-      - name: pwd
-        run: ls && pwd
       - name: Set up JDK 17
+        run: |
+          mv ./* /
         uses: actions/setup-java@v3
         with:
           java-version: '17'
           distribution: 'corretto'
+
+      - name: pwd
+        run: ls && pwd
 
       - name: Setup gradle
         uses: gradle/gradle-build-action@v2
