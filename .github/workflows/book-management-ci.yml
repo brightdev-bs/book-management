@@ -12,9 +12,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      - name: Move Java Sample code
-        run: |
-          mv ./* ./
+
       - uses: actions/setup-java@v3
         with:
           java-version: "17"
