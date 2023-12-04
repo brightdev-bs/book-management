@@ -1,8 +1,6 @@
 name: book-management-ci
 
 on:
-  push:
-    branches: [ "main" ]
   pull_request:
     branches: [ "main"]
 
@@ -24,4 +22,5 @@ jobs:
       - name: Setup gradle
         uses: gradle/gradle-build-action@v2
         with:
+          gradle-version: 8.4
           arguments: build
