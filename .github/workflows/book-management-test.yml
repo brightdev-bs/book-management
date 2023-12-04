@@ -1,0 +1,26 @@
+name: S3 Deploy Test
+on: workflow_dispatch
+
+jobs:
+  s3:
+    name: S3 Upload
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+
+      - name: Generate File
+        run: |
+          echo "Build ID: ${{ github.run_id }}" > ./build.txt
+      - name: AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-region: ap-northeast-2
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      - name: Upload File to AWS S3
+        run: |
+          aws s3 cp build.txt s3://book-management-1/test.txt
