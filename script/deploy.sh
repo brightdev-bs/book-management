@@ -5,8 +5,7 @@ JAR_NAME=$(basename $BUILD_JAR)
 echo "> JAR_NAME: ${JAR_NAME}"
 echo "> build 파일 복사"
 
-DEPLOY_PATH = /home/ubuntu/deploy
-cp $BUILD_JAR $DEPLOY_PATH
+cp $BUILD_JAR "/home/ubuntu/deploy"
 
 echo ">> 현재 실행중인 애플리케이션 PID "
 CURRENT_PID=$(pgrep -f $JAR_NAME)
@@ -20,6 +19,6 @@ else
   sleep 5
 fi
 
-DEPLOY_JAR=$DEPLOY_PATH$JAR_NAME
+DEPLOY_JAR="/home/ubuntu/deploy/"$JAR_NAME
 echo "> DEPLOY_JAR 배포"
 nohup java -jar $DEPLOY_JAR
