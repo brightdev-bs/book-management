@@ -30,6 +30,9 @@ jobs:
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
+        with:
+          name: build
+          path: build
 
   s3:
     needs: build
@@ -41,9 +44,6 @@ jobs:
     steps:
       - name: Download all workflow run artifacts
         uses: actions/download-artifact@v3
-        with:
-          name: build
-          path: build/**
 
       - name: checkout
         uses: actions/checkout@v3
