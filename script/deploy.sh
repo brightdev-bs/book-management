@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "mkdir /test"
+mkdir './test'
 
 BUILD_JAR=$(ls /home/ubuntu/project/build/libs/*.jar)
 JAR_NAME=$(basename $BUILD_JAR)
@@ -18,7 +18,7 @@ then
 else
   echo "> kill -9 $CURRENT_PID"
   kill -9 $CURRENT_PID
-  sleep 10
+  sleep 5
 fi
 
 
