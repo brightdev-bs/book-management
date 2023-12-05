@@ -11,7 +11,7 @@ permissions:
     group: ubuntu
     mode: 755
 hooks:
-  AfterInstall:
-    - location: script/deploy.sh
+  ApplicationStart:
+    - location: /home/ubuntu/project/scripts/deploy.sh
       timeout: 600
       runas: ubuntu
