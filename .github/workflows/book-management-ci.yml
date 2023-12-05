@@ -22,8 +22,11 @@ jobs:
         with:
           gradle-version: '8.4'
 
+      - name: ls
+        run: echo "output = " >> "${GITHUB_OUTPUT}
+
       - name: Build with Gradle
-        run: ./gradlew build -x test
+        run: clean build -x test
 
   s3:
     needs: build
