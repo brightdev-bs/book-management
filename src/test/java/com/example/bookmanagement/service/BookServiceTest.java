@@ -91,7 +91,7 @@ class BookServiceTest {
 
         given(memberRepository.findById(any(UUID.class))).willReturn(Optional.of(member));
         given(bookRepository.findById(any(Long.class))).willReturn(Optional.of(book));
-        given(book.getBorrowed()).willReturn(true);
+        given(book.isBorrowed()).willReturn(true);
 
         Assertions.assertThrows(BookNotAvailableException.class, () -> bookService.borrowBook(form));
     }

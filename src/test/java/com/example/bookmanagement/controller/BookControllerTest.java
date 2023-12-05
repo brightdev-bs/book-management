@@ -164,8 +164,8 @@ class BookControllerTest {
     @DisplayName("도서 업데이트")
     @Test
     void updateBook() throws Exception {
-        bookRepository.save(BookFixture.getDefaultBook());
-        BookUpdateForm form = new BookUpdateForm(1L, "changedBook", "changedAuthor");
+        Book book = bookRepository.save(BookFixture.getDefaultBook());
+        BookUpdateForm form = new BookUpdateForm(book.getId(), "changedBook", "changedAuthor");
         mockMvc.perform(patch("/books/update")
                         .content(objectMapper.writeValueAsString(form))
                         .contentType(MediaType.APPLICATION_JSON)

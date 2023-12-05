@@ -29,13 +29,14 @@ public class Book extends BaseEntity {
     public Book() {}
 
     @Builder
-    public Book(Long id, String name, String author, Boolean borrowed, List<BookHistory> histories) {
+    public Book(Long id, String name, String author, boolean borrowed, List<BookHistory> histories) {
         this.id = id;
         this.name = name;
         this.author = author;
         this.borrowed = borrowed;
-        this.histories = histories == null ? new ArrayList<>() : histories;
+        this.histories = histories;
     }
+
 
     public void setBorrowed(boolean flag) {
         this.borrowed = flag;

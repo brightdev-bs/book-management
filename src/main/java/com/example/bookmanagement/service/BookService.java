@@ -40,7 +40,7 @@ public class BookService {
         Member member = memberRepository.findById(form.memberId()).orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND_MEMBER));
         Book book = bookRepository.findById(form.bookId()).orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND_BOOK));
 
-        if (book.getBorrowed()) {
+        if (book.isBorrowed()) {
             throw new BookNotAvailableException(ErrorCode.NOT_AVAILABLE_BOOK);
         }
 
