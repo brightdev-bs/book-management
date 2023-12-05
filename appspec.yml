@@ -6,10 +6,10 @@ files:
     destination: /home/ubuntu/project
     overwrite: yes
 permissions:
-  - object: /home/ubuntu/project
+  - object: /
+    pattern: "**"
     owner: ubuntu
     group: ubuntu
-    mode: 755
 hooks:
   ApplicationStart:
     - location: deploy.sh
