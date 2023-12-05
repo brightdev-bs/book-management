@@ -23,7 +23,7 @@ fi
 
 
 DEPLOY_JAR="/home/ubuntu/deploy/"$JAR_NAME
-chmod +x DEPLOY_JAR
+chmod +x $DEPLOY_JAR
 
 echo "> DEPLOY_JAR 배포"
 nohup java -jar \
