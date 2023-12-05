@@ -26,6 +26,7 @@ jobs:
         run: ./gradlew build -x test
 
   s3:
+    needs: build
     name: S3 Upload
     runs-on: ubuntu-latest
     permissions:
