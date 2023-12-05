@@ -21,7 +21,7 @@ public class Book extends BaseEntity {
 
     private String author;
 
-    private Boolean borrowed;
+    private boolean borrowed;
 
     @OneToMany(mappedBy = "book")
     private List<BookHistory> histories = new ArrayList<>();
