@@ -1,7 +1,8 @@
 name: book-management-ci
 
 on:
-  workflow_dispatch:
+  pull_request:
+    branches: [ "main" ]
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -23,3 +24,27 @@ jobs:
 
       - name: Build with Gradle
         run: ./gradlew build -x test
+
+  s3:
+    name: S3 Upload
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+
+      - name: Make Zip File
+        run: zip -r ./$GITHUB_SHA.zip .
+        shell: bash
+
+      - name: AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-region: ap-northeast-2
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      - name: Upload File to AWS S3
+        run: |
+          aws s3 cp ./$GITHUB_SHA.zip s3://book-management-1/
