@@ -1,6 +1,5 @@
 name: S3 Deploy Test
 on: workflow_dispatch
-
 jobs:
   s3:
     name: S3 Upload
@@ -24,3 +23,8 @@ jobs:
       - name: Upload File to AWS S3
         run: |
           aws s3 cp build.txt s3://book-management-1/test.txt
+#      - name: Code Deploy
+#        run: aws deploy create-deployment --application-name book-management
+#          --deployment-config-name CodeDeployDefault.OneAtATime
+#          --deployment-group-name book-group
+#          --s3-location bucket=book-management-1,bundleType=txt,key=server/build.zip

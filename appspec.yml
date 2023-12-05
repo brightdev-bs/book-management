@@ -1,0 +1,17 @@
+version: 0.0
+os: linux
+
+files:
+  - source: /
+    destination: /home/ubuntu/project
+    overwrite: yes
+permissions:
+  - object: /home/ubuntu/project
+    owner: ubuntu
+    group: ubuntu
+    mode: 755
+hooks:
+  AfterInstall:
+    - location: script/deploy.sh
+      timeout: 180
+      runas: root
