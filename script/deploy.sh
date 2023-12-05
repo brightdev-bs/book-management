@@ -1,5 +1,7 @@
 #!/bin/bash
 
+echo "mkdir /test"
+
 BUILD_JAR=$(ls /home/ubuntu/project/build/libs/*.jar)
 JAR_NAME=$(basename $BUILD_JAR)
 echo "> JAR_NAME: ${JAR_NAME}"
