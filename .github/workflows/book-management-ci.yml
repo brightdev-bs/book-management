@@ -23,7 +23,7 @@ jobs:
           gradle-version: '8.4'
 
       - name: ls
-        run: echo "output = " >> "${GITHUB_OUTPUT}
+        run: echo "output = " >> ${GITHUB_OUTPUT}
 
       - name: Build with Gradle
         run: clean build -x test
