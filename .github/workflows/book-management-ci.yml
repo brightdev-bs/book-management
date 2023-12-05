@@ -28,6 +28,9 @@ jobs:
           arguments: build -x test
           build-root-directory: .
 
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+
   s3:
     needs: build
     name: S3 Upload
@@ -36,6 +39,9 @@ jobs:
       id-token: write
       contents: read
     steps:
+      - name: Download all workflow run artifacts
+        uses: actions/download-artifact@v3
+
       - name: checkout
         uses: actions/checkout@v3
 
