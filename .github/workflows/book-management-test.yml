@@ -25,11 +25,3 @@ jobs:
       - name: Upload File to AWS S3
         run: |
           aws s3 cp build.txt s3://book-management-1/test.txt
-      - name: Code Deploy
-        run: |
-          echo "deploy 시작"
-        uses: aws-actions/aws-codedeploy@v2
-        with:
-          deployment-group: default-cd
-          region: ap-northeast-2
-          wait-until-deployed: true
