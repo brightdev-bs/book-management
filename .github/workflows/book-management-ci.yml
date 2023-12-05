@@ -42,11 +42,11 @@ jobs:
       id-token: write
       contents: read
     steps:
-      - name: Download all workflow run artifacts
-        uses: actions/download-artifact@v3
-
       - name: checkout
         uses: actions/checkout@v3
+
+      - name: Download all workflow run artifacts
+        uses: actions/download-artifact@v3
 
       - name: Make Zip File
         run: zip -r ./$GITHUB_SHA.zip .
