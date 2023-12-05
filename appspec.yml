@@ -8,3 +8,8 @@ permissions:
     owner: ubuntu
     group: ubuntu
     mode: 755
+hooks:
+  AfterInstall:
+    - location: script/deploy.sh
+      timeout: 60
+      runas: root
