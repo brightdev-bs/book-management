@@ -6,12 +6,13 @@ files:
     destination: /home/ubuntu/project
     overwrite: yes
 permissions:
-  - object: /home/ubuntu/project
+  - object: /
+    pattern: "**"
     owner: ubuntu
     group: ubuntu
-    mode: 755
+    mode: 777
 hooks:
-  AfterInstall:
-    - location: script/deploy.sh
-      timeout: 180
+  ApplicationStart:
+    - location: scripts/deploy.sh
+      timeout: 600
       runas: root
